@@ -4,6 +4,7 @@ require "rspotify"
 require "dotenv"
 require "omniauth"
 require "better_errors"
+require_relative "./lib/similar_track_finder"
 
 Dotenv.load
 enable :sessions
@@ -63,15 +64,6 @@ def load_tracks(playlist)
   tracks.flatten
 end
 
-def find_similar(tracks)
-  mapped = {}
-  tracks.map do |track|
-    mapped << {name: track.name, tracks: []} unless mapped[track.name]
-    mapped[track.name][tracks] << track
-  end
-  mapped
-end
-
 get "/" do
   erb :index
 end
@@ -85,7 +77,7 @@ end
 get "/playlists/:name" do
   login
   @playlist = find_playlist params[:name]
-  @tracks = find_similar load_tracks(@playlist)
+  @tracks = SimilarTrackFinder.new.map(load_tracks(@playlist))
   erb :playlist
 end
 
