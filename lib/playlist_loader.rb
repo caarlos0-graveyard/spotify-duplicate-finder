@@ -1,17 +1,28 @@
 require 'rspotify'
+
 class PlaylistLoader
-  STARRED = "starred"
   def initialize(user)
     @user = user
   end
 
   def all
     playlists = @user.playlists
-    playlists << RSpotify::Playlist.find(@user.id, STARRED)
-    playlists.map do |playlist|
-      id = playlist.name.eql? "Starred" ? STARRED : playlist.id
-      { id: id, name: playlist.name }
+    playlists << RSpotify::Playlist.find(@user.id, "starred")
+    sort(playlists).map do |playlist|
+      { id: id_of(playlist), name: playlist.name }
     end
-    playlists.sort! { |x,y| x.name <=> y.name }
+  end
+
+  private
+
+  def id_of(playlist)
+    return "starred" if playlist.name.eql?("Starred")
+    playlist.id
+  end
+
+  def sort(playlists)
+    playlists.sort do |x, y|
+      x.name <=> y.name
+    end
   end
 end
