@@ -5,6 +5,8 @@ require "dotenv"
 require "omniauth"
 require "better_errors"
 require_relative "./lib/similar_track_finder"
+require_relative "./lib/playlist_loader"
+require_relative "./lib/playlist_track_loader"
 
 Dotenv.load
 enable :sessions
@@ -32,36 +34,10 @@ use OmniAuth::Builder do
 end
 
 TRACK_OFFSET = 100
-STARRED = "starred"
-
-def find_playlist(name)
-  RSpotify::Playlist.find(@user.id, name) if @user
-end
 
 def login
   redirect "/" unless session[:auth]
   @user = RSpotify::User.new(session[:auth])
-end
-
-def load_playlists
-  playlists = @user.playlists
-  playlists << find_playlist(STARRED)
-  playlists.map do |playlist|
-    id = playlist.name.eql? "Starred" ? STARRED : playlist.id
-    { id: id, name: playlist.name }
-  end
-  playlists.sort! { |x,y| x.name <=> y.name }
-end
-
-def load_tracks(playlist)
-  total = playlist.total
-  offset = 0
-  tracks = []
-  while offset < total + TRACK_OFFSET
-    tracks << playlist.tracks(limit: TRACK_OFFSET, offset: offset)
-    offset += TRACK_OFFSET
-  end
-  tracks.flatten
 end
 
 get "/" do
@@ -70,14 +46,14 @@ end
 
 get "/playlists" do
   login
-  @playlists = load_playlists
+  @playlists = PlaylistLoader.new(@user).load
   erb :playlists
 end
 
 get "/playlists/:name" do
   login
-  @playlist = find_playlist params[:name]
-  @tracks = SimilarTrackFinder.new.map(load_tracks(@playlist))
+  @playlist = RSpotify::Playlist.find(@user.id, params[:name])
+  @tracks = SimilarTrackFinder.new.map(PlaylistTrackLoader.new(@playlist).get)
   erb :playlist
 end
 

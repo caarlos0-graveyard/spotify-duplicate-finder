@@ -3,12 +3,7 @@ require_relative "mapped_track"
 class SimilarTrackFinder
   def map(tracks = [])
     return [] unless tracks
-    mapped = map_by_name(tracks)
-    mapped.select do |track|
-      mapped[track].get.size > 1
-    end.map do |track|
-      track.last.get
-    end.flatten
+    remove_uniques map_by_name(tracks)
   end
 
   private
@@ -20,5 +15,14 @@ class SimilarTrackFinder
       mapped[track.name] << track
     end
     mapped
+  end
+
+  def remove_uniques(mapped)
+    mapped.select do |track|
+      mapped[track].get.size > 1
+    end.map do |track|
+      # this is weird...
+      track.last.get
+    end.flatten
   end
 end
