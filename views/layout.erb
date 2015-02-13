@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find duplicated tracks in your Spotify playlists">
+  <meta name="author" content="Carlos Alexandro Becker">
+
+  <title>Spotify Duplicate Finder</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Spotify Duplicate Finder</h1>
+      <p class="lead">
+        Find duplicated music in your playlists and remove them.
+      </p>
+    </div>
+
+    <%= yield %>
+
+    <p></p>
+    <hr>
+    <footer class="footer">
+      <iframe src="https://embed.spotify.com/follow/1/?uri=spotify:user:caarlos0&size=detail&theme=light" width="300" height="56" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowtransparency="true"></iframe>
+    </footer>
+
+  </div>
+</body>
+</html>
