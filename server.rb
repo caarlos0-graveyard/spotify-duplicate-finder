@@ -46,14 +46,14 @@ end
 
 get "/playlists" do
   login
-  @playlists = PlaylistLoader.new(@user).load
+  @playlists = PlaylistLoader.new(@user).all
   erb :playlists
 end
 
 get "/playlists/:name" do
   login
   @playlist = RSpotify::Playlist.find(@user.id, params[:name])
-  @tracks = SimilarTrackFinder.new.map(PlaylistTrackLoader.new(@playlist).get)
+  @tracks = SimilarTrackFinder.new.map(PlaylistTrackLoader.new(@playlist).all)
   erb :playlist
 end
 
