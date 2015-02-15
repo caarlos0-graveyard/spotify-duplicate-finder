@@ -20,7 +20,7 @@ function removeSelected() {
   tracks.length + "tracks?";
   if (confirm(message)) {
     $.ajax({
-      url: document.location.pathname + '/remove',
+      url: document.location.pathname,
       type: 'DELETE',
       data: {
         tracks: tracks

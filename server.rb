@@ -59,7 +59,7 @@ get "/playlists/:name/?" do
   erb :playlist
 end
 
-delete "/playlists/:name/remove" do
+delete "/playlists/:name/?" do
   login
   @playlist = RSpotify::Playlist.find(@user.id, params[:name])
   TrackRemover.new(@playlist).remove(params[:tracks])
